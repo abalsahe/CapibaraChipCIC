@@ -214,7 +214,7 @@ module chip_top #(
         );
     end
     endgenerate
-
+    wire [NUM_ANALOG_PADS-1:0] analog_CORE;
     generate
     for (genvar i=0; i<NUM_ANALOG_PADS; i++) begin : analog
         (* keep *)
@@ -227,6 +227,13 @@ module chip_top #(
             `endif
             .ASIG5V (analog_PAD[i])
         );
+        
+        (* keep *)
+        analog_connect connect (
+            .asig (analog_PAD[i]),
+            .pad  (analog_CORE[i])
+        );
+        
     end
     endgenerate
 
@@ -258,7 +265,7 @@ module chip_top #(
         .bidir_pu   (bidir_CORE2PAD_PU),
         .bidir_pd   (bidir_CORE2PAD_PD),
         
-        .analog     (analog_PAD)
+        .analog     (analog_CORE)
     );
     
     // Do not remove, necessary for tapeout
@@ -269,6 +276,13 @@ module chip_top #(
     
     // wafer.space logo - can be removed if desired
     (* keep *) gf180mcu_ws_ip__logo wafer_space_logo ();
+    //IPN LOGO
+    (* keep *) ipn_logo ipn_logo_u ();
+ 
+    (* keep *) cic cic_u ();
+
+    (* keep *) capibara capibara_u ();
+
 
 endmodule
 

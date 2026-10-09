@@ -17,7 +17,7 @@ PDK_COMMIT ?= f6eeac7dad085ffcc829ccfd721f7b4ce39edcf7
 ifeq ($(SCL),default)
     SCL = gf180mcu_fd_sc_mcu7t5v0
 endif
-SCL ?= gf180mcu_fd_sc_mcu7t5v0
+SCL = gf180mcu_as_sc_mcu7t3v3
 
 # Available PAD libraries:
 # gf180mcu_fd_io
@@ -26,22 +26,24 @@ SCL ?= gf180mcu_fd_sc_mcu7t5v0
 ifeq ($(PAD),default)
     PAD = gf180mcu_fd_io
 endif
-PAD ?= gf180mcu_fd_io
+PAD = gf180mcu_ocd_io
 
 # Available SRAM macros:
 # gf180mcu_fd_ip_sram
-# gf180mcu_ocd_ip_sram
+# gf180mcu_ocd_io
 
 ifeq ($(SRAM),default)
     SRAM = gf180mcu_fd_ip_sram
 endif
-SRAM ?= gf180mcu_fd_ip_sram
+SRAM = gf180mcu_ocd_io
 
 ifeq ($(SRAM),gf180mcu_fd_ip_sram)
     MACROS = 5v
 else
     MACROS = 3v3
 endif
+
+MACROS = 3v3
 
 AVAILABLE_SLOTS = 1x1 0p5x1 1x0p5 0p5x0p5
 DEFAULT_SLOT = 1x1
@@ -52,6 +54,8 @@ SLOT ?= $(DEFAULT_SLOT)
 ifeq ($(SLOT),default)
     SLOT = $(DEFAULT_SLOT)
 endif
+
+SLOT = 1x0p5
 
 ifeq ($(filter $(SLOT),$(AVAILABLE_SLOTS)),)
     $(error $(SLOT) does not exist in AVAILABLE_SLOTS: $(AVAILABLE_SLOTS))
