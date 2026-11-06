@@ -282,6 +282,7 @@ module chip_top #(
     (* keep *) cic cic_u ();
 
     (* keep *) capibara capibara_u ();
+    (* keep *) capibara_esquina capibara_esquina_u ();
 
 
 endmodule

@@ -128,6 +128,20 @@ MACROS:
       cic_u:
         location: [3320, 1105]
         orientation: N
+  capibara_esquina:
+    gds:
+      - dir::build/capibara_esquina/capibara_esquina.gds
+    lef:
+      - dir::build/capibara_esquina/capibara_esquina.lef
+    vh:
+      - dir::build/capibara_esquina/capibara_esquina.vh
+    lib:
+      "*":
+        - dir::build/capibara_esquina/capibara_esquina.lib
+    instances:
+      capibara_esquina_u:
+        location: [3770.6, 31.91]
+        orientation: N
   capibara:
     gds:
       - dir::build/capibara/capibara.gds
@@ -141,68 +155,6 @@ MACROS:
     instances:
       capibara_u:
         location: [3320, 925]
-        orientation: N
-  contador:
-    gds:
-      - dir::build/contador/gds/contador.gds
-    lef:
-      - dir::build/contador/lef/contador.lef
-    vh:
-      - dir::build/contador/vh/contador.vh
-    nl:
-      - dir::build/contador/nl/contador.nl.v
-    pnl:
-      - dir::build/contador/pnl/contador.pnl.v
-    spice:
-      - dir::build/contador/spice/contador.spice
-    sdf:
-      max_ff_n40C_3v60:
-        - dir::build/contador/sdf/max_ff_n40C_3v60/contador__max_ff_n40C_3v60.sdf
-      max_ss_125C_3v00:
-        - dir::build/contador/sdf/max_ss_125C_3v00/contador__max_ss_125C_3v00.sdf
-      max_tt_025C_3v30:
-        - dir::build/contador/sdf/max_tt_025C_3v30/contador__max_tt_025C_3v30.sdf
-      min_ff_n40C_3v60:
-        - dir::build/contador/sdf/min_ff_n40C_3v60/contador__min_ff_n40C_3v60.sdf
-      min_ss_125C_3v00:
-        - dir::build/contador/sdf/min_ss_125C_3v00/contador__min_ss_125C_3v00.sdf
-      min_tt_025C_3v30:
-        - dir::build/contador/sdf/min_tt_025C_3v30/contador__min_tt_025C_3v30.sdf
-      nom_ff_n40C_3v60:
-        - dir::build/contador/sdf/nom_ff_n40C_3v60/contador__nom_ff_n40C_3v60.sdf
-      nom_ss_125C_3v00:
-        - dir::build/contador/sdf/nom_ss_125C_3v00/contador__nom_ss_125C_3v00.sdf
-      nom_tt_025C_3v30:
-        - dir::build/contador/sdf/nom_tt_025C_3v30/contador__nom_tt_025C_3v30.sdf
-    lib:
-      max_ff_n40C_3v60:
-        - dir::build/contador/lib/max_ff_n40C_3v60/contador__max_ff_n40C_3v60.lib
-      max_ss_125C_3v00:
-        - dir::build/contador/lib/max_ss_125C_3v00/contador__max_ss_125C_3v00.lib
-      max_tt_025C_3v30:
-        - dir::build/contador/lib/max_tt_025C_3v30/contador__max_tt_025C_3v30.lib
-      min_ff_n40C_3v60:
-        - dir::build/contador/lib/min_ff_n40C_3v60/contador__min_ff_n40C_3v60.lib
-      min_ss_125C_3v00:
-        - dir::build/contador/lib/min_ss_125C_3v00/contador__min_ss_125C_3v00.lib
-      min_tt_025C_3v30:
-        - dir::build/contador/lib/min_tt_025C_3v30/contador__min_tt_025C_3v30.lib
-      nom_ff_n40C_3v60:
-        - dir::build/contador/lib/nom_ff_n40C_3v60/contador__nom_ff_n40C_3v60.lib
-      nom_ss_125C_3v00:
-        - dir::build/contador/lib/nom_ss_125C_3v00/contador__nom_ss_125C_3v00.lib
-      nom_tt_025C_3v30:
-        - dir::build/contador/lib/nom_tt_025C_3v30/contador__nom_tt_025C_3v30.lib
-    spef:
-      max:
-        - dir::build/contador/spef/max/contador.max.spef
-      min:
-        - dir::build/contador/spef/min/contador.min.spef
-      nom:
-        - dir::build/contador/spef/nom/contador.nom.spef
-    instances:
-      i_chip_core.contador_u:
-        location: [550, 550]
         orientation: N
   D14_topcell:
     gds:
@@ -304,12 +256,76 @@ MACROS:
       analog[9].connect:
         location: [3298.34,2154.0]
         orientation: S
+  con32_one_instruction:
+    gds:
+      - dir::build/con32_one_instruction/gds/con32_one_instruction.gds
+    lef:
+      - dir::build/con32_one_instruction/lef/con32_one_instruction.lef
+    vh:
+      - dir::build/con32_one_instruction/vh/con32_one_instruction.vh
+    nl:
+      - dir::build/con32_one_instruction/nl/con32_one_instruction.nl.v
+    pnl:
+      - dir::build/con32_one_instruction/pnl/con32_one_instruction.pnl.v
+    spice:
+      - dir::build/con32_one_instruction/spice/con32_one_instruction.spice
+    sdf:
+      nom_tt_025C_3v30:
+      - dir::build/con32_one_instruction/sdf/nom_tt_025C_3v30/con32_one_instruction__nom_tt_025C_3v30.sdf
+      nom_ss_125C_3v00:
+      - dir::build/con32_one_instruction/sdf/nom_ss_125C_3v00/con32_one_instruction__nom_ss_125C_3v00.sdf
+      nom_ff_n40C_3v60:
+      - dir::build/con32_one_instruction/sdf/nom_ff_n40C_3v60/con32_one_instruction__nom_ff_n40C_3v60.sdf
+      min_tt_025C_3v30:
+      - dir::build/con32_one_instruction/sdf/min_tt_025C_3v30/con32_one_instruction__min_tt_025C_3v30.sdf
+      min_ss_125C_3v00:
+      - dir::build/con32_one_instruction/sdf/min_ss_125C_3v00/con32_one_instruction__min_ss_125C_3v00.sdf
+      min_ff_n40C_3v60:
+      - dir::build/con32_one_instruction/sdf/min_ff_n40C_3v60/con32_one_instruction__min_ff_n40C_3v60.sdf
+      max_tt_025C_3v30:
+      - dir::build/con32_one_instruction/sdf/max_tt_025C_3v30/con32_one_instruction__max_tt_025C_3v30.sdf
+      max_ss_125C_3v00:
+      - dir::build/con32_one_instruction/sdf/max_ss_125C_3v00/con32_one_instruction__max_ss_125C_3v00.sdf
+      max_ff_n40C_3v60:
+      - dir::build/con32_one_instruction/sdf/max_ff_n40C_3v60/con32_one_instruction__max_ff_n40C_3v60.sdf
+    lib:
+      nom_tt_025C_3v30:
+      - dir::build/con32_one_instruction/lib/nom_tt_025C_3v30/con32_one_instruction__nom_tt_025C_3v30.lib
+      nom_ss_125C_3v00:
+      - dir::build/con32_one_instruction/lib/nom_ss_125C_3v00/con32_one_instruction__nom_ss_125C_3v00.lib
+      nom_ff_n40C_3v60:
+      - dir::build/con32_one_instruction/lib/nom_ff_n40C_3v60/con32_one_instruction__nom_ff_n40C_3v60.lib
+      min_tt_025C_3v30:
+      - dir::build/con32_one_instruction/lib/min_tt_025C_3v30/con32_one_instruction__min_tt_025C_3v30.lib
+      min_ss_125C_3v00:
+      - dir::build/con32_one_instruction/lib/min_ss_125C_3v00/con32_one_instruction__min_ss_125C_3v00.lib
+      min_ff_n40C_3v60:
+      - dir::build/con32_one_instruction/lib/min_ff_n40C_3v60/con32_one_instruction__min_ff_n40C_3v60.lib
+      max_tt_025C_3v30:
+      - dir::build/con32_one_instruction/lib/max_tt_025C_3v30/con32_one_instruction__max_tt_025C_3v30.lib
+      max_ss_125C_3v00:
+      - dir::build/con32_one_instruction/lib/max_ss_125C_3v00/con32_one_instruction__max_ss_125C_3v00.lib
+      max_ff_n40C_3v60:
+      - dir::build/con32_one_instruction/lib/max_ff_n40C_3v60/con32_one_instruction__max_ff_n40C_3v60.lib
+    spef:
+      min:
+      - dir::build/con32_one_instruction/spef/min/con32_one_instruction.min.spef
+      nom:
+      - dir::build/con32_one_instruction/spef/nom/con32_one_instruction.nom.spef
+      max:
+      - dir::build/con32_one_instruction/spef/max/con32_one_instruction.max.spef
+    instances:
+      # Ajusta el nombre de la instancia según esté declarada en chip_core.sv
+      # y sus coordenadas [X, Y] dentro del área útil del core
+      i_chip_core.con32_one_instruction_u:
+        location: [550, 550]
+        orientation: N
 # This is an alternative method compared to
 # specifying the power connections in the RTL
 PDN_MACRO_CONNECTIONS:
 #- "i_chip_core.sram_0 VDD VSS VDD VSS"
 #- "i_chip_core.sram_1 VDD VSS VDD VSS"
-- "i_chip_core.contador_u VDD VSS VDD VSS"
+- "i_chip_core.con32_one_instruction_u VDD VSS VDD VSS"
 - "i_chip_core.D14_topcell_u VDD VSS avdd avss"
 
 

@@ -1,3 +1,4 @@
+(* blackbox *)
 module D14_topcell (Vin,
     Vin_neg,
     vpost1,
@@ -15,6 +16,7 @@ module D14_topcell (Vin,
  inout vw11;
  inout vw42;
 
+/*
  wire A_wire;
  wire B_wire;
  wire ifwd1_net;
@@ -76,4 +78,5 @@ module D14_topcell (Vin,
     .vpre4(vpre4_int),
     .vw11(vw11),
     .vw42(vw42));
+*/
 endmodule

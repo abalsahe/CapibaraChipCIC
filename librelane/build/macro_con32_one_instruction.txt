@@ -1,0 +1,63 @@
+MACROS:
+  con32_one_instruction:
+    gds:
+      - dir::build/con32_one_instruction/gds/con32_one_instruction.gds
+    lef:
+      - dir::build/con32_one_instruction/lef/con32_one_instruction.lef
+    vh:
+      - dir::build/con32_one_instruction/vh/con32_one_instruction.vh
+    nl:
+      - dir::build/con32_one_instruction/nl/con32_one_instruction.nl.v
+    pnl:
+      - dir::build/con32_one_instruction/pnl/con32_one_instruction.pnl.v
+    spice:
+      - dir::build/con32_one_instruction/spice/con32_one_instruction.spice
+    sdf:
+      max_ff_n40C_3v60:
+        - dir::build/con32_one_instruction/sdf/max_ff_n40C_3v60/con32_one_instruction__max_ff_n40C_3v60.sdf
+      max_ss_125C_3v00:
+        - dir::build/con32_one_instruction/sdf/max_ss_125C_3v00/con32_one_instruction__max_ss_125C_3v00.sdf
+      max_tt_025C_3v30:
+        - dir::build/con32_one_instruction/sdf/max_tt_025C_3v30/con32_one_instruction__max_tt_025C_3v30.sdf
+      min_ff_n40C_3v60:
+        - dir::build/con32_one_instruction/sdf/min_ff_n40C_3v60/con32_one_instruction__min_ff_n40C_3v60.sdf
+      min_ss_125C_3v00:
+        - dir::build/con32_one_instruction/sdf/min_ss_125C_3v00/con32_one_instruction__min_ss_125C_3v00.sdf
+      min_tt_025C_3v30:
+        - dir::build/con32_one_instruction/sdf/min_tt_025C_3v30/con32_one_instruction__min_tt_025C_3v30.sdf
+      nom_ff_n40C_3v60:
+        - dir::build/con32_one_instruction/sdf/nom_ff_n40C_3v60/con32_one_instruction__nom_ff_n40C_3v60.sdf
+      nom_ss_125C_3v00:
+        - dir::build/con32_one_instruction/sdf/nom_ss_125C_3v00/con32_one_instruction__nom_ss_125C_3v00.sdf
+      nom_tt_025C_3v30:
+        - dir::build/con32_one_instruction/sdf/nom_tt_025C_3v30/con32_one_instruction__nom_tt_025C_3v30.sdf
+    lib:
+      max_ff_n40C_3v60:
+        - dir::build/con32_one_instruction/lib/max_ff_n40C_3v60/con32_one_instruction__max_ff_n40C_3v60.lib
+      max_ss_125C_3v00:
+        - dir::build/con32_one_instruction/lib/max_ss_125C_3v00/con32_one_instruction__max_ss_125C_3v00.lib
+      max_tt_025C_3v30:
+        - dir::build/con32_one_instruction/lib/max_tt_025C_3v30/con32_one_instruction__max_tt_025C_3v30.lib
+      min_ff_n40C_3v60:
+        - dir::build/con32_one_instruction/lib/min_ff_n40C_3v60/con32_one_instruction__min_ff_n40C_3v60.lib
+      min_ss_125C_3v00:
+        - dir::build/con32_one_instruction/lib/min_ss_125C_3v00/con32_one_instruction__min_ss_125C_3v00.lib
+      min_tt_025C_3v30:
+        - dir::build/con32_one_instruction/lib/min_tt_025C_3v30/con32_one_instruction__min_tt_025C_3v30.lib
+      nom_ff_n40C_3v60:
+        - dir::build/con32_one_instruction/lib/nom_ff_n40C_3v60/con32_one_instruction__nom_ff_n40C_3v60.lib
+      nom_ss_125C_3v00:
+        - dir::build/con32_one_instruction/lib/nom_ss_125C_3v00/con32_one_instruction__nom_ss_125C_3v00.lib
+      nom_tt_025C_3v30:
+        - dir::build/con32_one_instruction/lib/nom_tt_025C_3v30/con32_one_instruction__nom_tt_025C_3v30.lib
+    spef:
+      max:
+        - dir::build/con32_one_instruction/spef/max/con32_one_instruction.max.spef
+      min:
+        - dir::build/con32_one_instruction/spef/min/con32_one_instruction.min.spef
+      nom:
+        - dir::build/con32_one_instruction/spef/nom/con32_one_instruction.nom.spef
+    instances:
+      i_chip_core.con32_one_instruction_u:
+        location: [550, 550]
+        orientation: N

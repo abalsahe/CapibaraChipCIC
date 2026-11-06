@@ -42,22 +42,14 @@ module chip_core #(
 
 
 
-    wire [3:0] resultado_contador;
-   
-    // ============================================================
-    // Instancia del contador
-    // ============================================================
-    //enable tiene que ser bidir_in[0]
-    //suma_resta tiene que ser bidir_in[1]
-    //resultado_contador tiene que ser la variable "resultado" de la instancia
+    wire rxd_wire;
+    wire rst_active_high;
+    wire txd_wire;
+    wire rxd_out_wire;
+    wire tx_busy_wire;
+    wire rx_sample_pulse_wire;
 
-    contador contador_u (
-        .reloj      (clk),
-        .reset      (rst_n),
-        .enable     (bidir_in[0]),
-        .suma_resta (bidir_in[1]),
-        .resultado  (resultado_contador)
-    );
+
 
     (* keep *)
     D14_topcell D14_topcell_u(
@@ -71,41 +63,83 @@ module chip_core #(
         .vpost2     (analog[7])
     );
     
+
+    // Invertir reset: chip_core recibe rst_n (activo en 0), el macro usa rst (activo en 1)
+    assign rxd_wire        = bidir_in[0];
+
+
+
+    // Drive the bidir pads as outputs (CMOS buffer, fast slew).
+    //assign bidir_oe = '1;
+    // Output Enable (1 = Salida, 0 = Entrada/Hi-Z)
+    assign bidir_oe[0]   = 1'b0;          // RXD es entrada
+    assign bidir_oe[1]   = 1'b1;          // TXD es salida
+    assign bidir_oe[2]   = 1'b1;          // rxd_out (LED) es salida
+    assign bidir_oe[3]   = 1'b1;          // tx_busy (LED) es salida
+    assign bidir_oe[4]   = 1'b1;          // rx_sample_pulse (LED) es salida
+    assign bidir_oe[NUM_BIDIR_PADS-1:5] = '0;
+
+//    assign bidir_ie = ~bidir_oe;
+// Input Enable (1 = Receptor digital activo)
+    assign bidir_ie ={{(NUM_BIDIR_PADS-5){1'b0}},~bidir_oe[4:0]};
+//    assign bidir_pu = '0;    
+// Pull-up / Pull-down (Pull-up en RXD para mantener UART inactiva en '1' si se desconecta)
+    assign bidir_pu[0]   = 1'b0;
+    //assign bidir_pu[1]   = 1'b1;
+    //assign bidir_pu[2]   = 1'b1;
+    //assign bidir_pu[3]   = 1'b1;
+    //assign bidir_pu[4]   = 1'b1;
+    assign bidir_pu[NUM_BIDIR_PADS-1:1] = '0;
     
-    //Configurar bidir_out, que resultado_contador tiene que estar en los bits 5:2
-    // usar assign
+    assign bidir_pd[0]   = 1'b0;
+    //assign bidir_pd[1]   = 1'b1;
+    //assign bidir_pd[2]   = 1'b1;
+    //assign bidir_pd[3]   = 1'b1;
+    //assign bidir_pd[4]   = 1'b1;
+    assign bidir_pd[NUM_BIDIR_PADS-1:1] = '0;
+    
 
-    assign bidir_out = {
-        {(NUM_BIDIR_PADS-6){1'b0}},
-        resultado_contador,
-        2'b00
-    };
-    //Configurar bidir_oe, que resultado_contador tiene que estar en los bits 5:2 como salidas y las entradas para los bits 1:0
-    // usar assign
-    assign bidir_oe = {
-        {(NUM_BIDIR_PADS-6){1'b0}},
-        4'b1111,
-        2'b00
-    };
-    //Configurar bidir_ie, que resultado_contador tiene que estar en los bits 5:2 como salidas y las entradas para los bits 1:0
-    // usar assign
-    assign bidir_ie = {
-        {(NUM_BIDIR_PADS-6){1'b0}},
-        ~bidir_oe[5:0]
-    };
-    //usar bidir_cs, bidir_sl, bidir_pu, bidir_pd todo en 0, se explicara| el porque
-    assign bidir_cs = '0;
-    assign bidir_sl = '0;
-    assign bidir_pu = '0;
-    assign bidir_pd = '0;
+    assign bidir_sl[0]   = 1'b1;
+    assign bidir_sl[1]   = 1'b0;          // TXD fast slew
+    assign bidir_sl[2]   = 1'b0;          // LED fast slew
+    assign bidir_sl[3]   = 1'b0;          // LED fast slew
+    assign bidir_sl[4]   = 1'b0;          // LED fat slew
+    assign bidir_sl[NUM_BIDIR_PADS-1:5] = '1;
+
+    assign bidir_cs[0]   = 1'b0;
+    assign bidir_cs[NUM_BIDIR_PADS-1:1] = '0;
 
 
+    assign bidir_out[0] = 1'b0;                  // Inactivo (bit 0 es entrada)
+    assign bidir_out[1] = txd_wire;              // TXD principal
+    assign bidir_out[2] = rxd_out_wire;          // LED RXD
+    assign bidir_out[3] = tx_busy_wire;          // LED TX Busy
+    assign bidir_out[4] = rx_sample_pulse_wire;  // LED RX Sample Pulse
+    assign bidir_out[NUM_BIDIR_PADS-1:5] = '1;   // Resto de pines a 0
 
+    // Keep synthesis from optimising bidir_in / input_in away.
+    logic _unused;
+    assign _unused = &{1'b0, bidir_in[NUM_BIDIR_PADS-1:1], input_in};
 
-
-
-    wire _unused;
-    assign _unused = &{1'b0, input_in, bidir_in[NUM_BIDIR_PADS-1:2]};
+    /*
+    // Free-running counter, width equal to the number of bidir pads.
+    logic [NUM_BIDIR_PADS-1:0] count;
+    always_ff @(posedge clk) begin
+        if (!rst_n) count <= '0;
+        else        count <= count + 1;
+    end
+    assign bidir_out = count;
+    */
+    
+    con32_one_instruction con32_one_instruction_u (
+        .clk_ref          (clk),
+        .rst              (rst_n),
+        .rxd              (rxd_wire),
+        .txd              (txd_wire),
+        .rxd_out          (rxd_out_wire),
+        .tx_busy          (tx_busy_wire),
+        .rx_sample_pulse  (rx_sample_pulse_wire)
+    );
 
 endmodule
 

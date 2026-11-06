@@ -1,0 +1,6 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1791855787" />
+    <testcase name="test_uart_convolution" classname="test" file="/foss/designs/CapibaraChipCIC/cocotb/tb_conv32bit/test.py" lineno="107" time="649.769403219223" sim_time_ns="6304406.664" ratio_time="9702.529286182751" />
+  </testsuite>
+</testsuites>
