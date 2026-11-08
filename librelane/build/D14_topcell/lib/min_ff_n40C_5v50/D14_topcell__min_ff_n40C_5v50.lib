@@ -29,36 +29,36 @@ library (D14_topcell) {
   cell ("D14_topcell") {
     is_macro_cell : true;
     pin("Vin") {
-      direction : inout;
-      capacitance : 0.1095;
+      direction : input;
+      capacitance : 0.0371;
     }
     pin("Vin_neg") {
-      direction : inout;
-      capacitance : 0.0929;
+      direction : input;
+      capacitance : 0.0192;
+    }
+    pin("vout_1") {
+      direction : output;
+      capacitance : 0.0100;
+    }
+    pin("vout_2") {
+      direction : output;
+      capacitance : 0.0277;
     }
     pin("vpost1") {
-      direction : inout;
-      capacitance : 0.0903;
+      direction : output;
+      capacitance : 0.0171;
     }
     pin("vpost2") {
-      direction : inout;
-      capacitance : 0.0917;
+      direction : output;
+      capacitance : 0.0236;
     }
     pin("vpre1") {
-      direction : inout;
-      capacitance : 0.0940;
+      direction : output;
+      capacitance : 0.0214;
     }
     pin("vpre2") {
-      direction : inout;
-      capacitance : 0.0913;
-    }
-    pin("vw11") {
-      direction : inout;
-      capacitance : 0.0808;
-    }
-    pin("vw42") {
-      direction : inout;
-      capacitance : 0.0774;
+      direction : output;
+      capacitance : 0.0186;
     }
   }
 

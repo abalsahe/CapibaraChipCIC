@@ -7,3 +7,7 @@ final/
 img/
 *.lyrdb
 generated_defines.svh
+
+cocotb/tb_conv32bit/dump_gls.vcd
+
+*.mag

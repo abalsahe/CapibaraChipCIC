@@ -1,0 +1,18 @@
+VERSION 5.7 ;
+BUSBITCHARS "[]" ;
+DIVIDERCHAR "/" ;
+
+MACRO capibara_esquina
+  CLASS BLOCK ;
+  FOREIGN capibara_esquina 0 0 ;
+  ORIGIN 0.000 0.000 ;
+  SIZE 104.120 BY 116.280 ;
+  SYMMETRY X Y ;
+
+  OBS
+    LAYER Metal5 ;
+      RECT 0.000 0.000 104.120 116.280 ;
+  END
+END capibara_esquina
+
+END LIBRARY
