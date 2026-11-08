@@ -176,28 +176,27 @@ KLAYOUT_RENDER_OVERSAMPLING: 3
 # workers * threads should equal the available
 # hardware threads for a best possible utilization.
 
-DRT_THREADS: 4
-KLAYOUT_DRC_THREADS: 4
-KLAYOUT_DENSITY_THREADS: 4
-KLAYOUT_XOR_THREADS: 4
-DRT_THREADS: 4
-STA_THREADS: 4
+DRT_THREADS: 8
+KLAYOUT_DRC_THREADS: 8
+KLAYOUT_DENSITY_THREADS: 8
+KLAYOUT_XOR_THREADS: 8
+STA_THREADS: 8
 
 # "max" equals max hardware threads
 KLAYOUT_DRC_OPTIONS:
   decks: "all,-antenna,-density,-cup" # disable CUP for now
   variant: ref::$PDK
-  workers: 10
+  workers: max
 
 KLAYOUT_DENSITY_OPTIONS:
   decks: "density"
   variant: ref::$PDK
-  workers: 10
+  workers: max
 
 KLAYOUT_ANTENNA_OPTIONS:
   decks: "antenna"
   variant: ref::$PDK
-  workers: 10
+  workers: max
 
 
 KLAYOUT_PROPERTIES: "dir::../gf180mcu_PK.lyp"

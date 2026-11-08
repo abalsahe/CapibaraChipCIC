@@ -3,9 +3,9 @@ MAKEFILE_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 RUN_TAG = $(shell ls librelane/runs/ | tail -n 1)
 TOP = chip_top
 
-PDK_ROOT = $(MAKEFILE_DIR)/gf180mcu
-PDK = gf180mcuD
-PDK_COMMIT = 792ef67037d74c8c51811eab3ce23cf793491296
+PDK_ROOT ?= $(MAKEFILE_DIR)/gf180mcu
+PDK ?= gf180mcuD
+PDK_COMMIT ?= 792ef67037d74c8c51811eab3ce23cf793491296
 
 # Available SCL libraries:
 # gf180mcu_as_sc_mcu7t3v3
@@ -31,12 +31,12 @@ PAD = gf180mcu_ocd_io
 
 # Available SRAM macros:
 # gf180mcu_fd_ip_sram
-# gf180mcu_ocd_io
+# gf180mcu_ocd_ip_sram
 
 ifeq ($(SRAM),default)
     SRAM = gf180mcu_fd_ip_sram
 endif
-SRAM = gf180mcu_ocd_io
+SRAM = gf180mcu_ocd_ip_sram
 
 ifeq ($(SRAM),gf180mcu_fd_ip_sram)
     MACROS = 5v
