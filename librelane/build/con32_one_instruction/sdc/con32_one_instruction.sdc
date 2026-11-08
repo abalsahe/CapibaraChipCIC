@@ -25,6 +25,8 @@ set_load -pin_load 0.0729 [get_ports {txd}]
 set_driving_cell -lib_cell gf180mcu_as_sc_mcu7t3v3__inv_4 -pin {Y} -input_transition_rise 0.0000 -input_transition_fall 0.0000 [get_ports {clk_ref}]
 set_driving_cell -lib_cell gf180mcu_as_sc_mcu7t3v3__inv_2 -pin {Y} -input_transition_rise 0.0000 -input_transition_fall 0.0000 [get_ports {rst}]
 set_driving_cell -lib_cell gf180mcu_as_sc_mcu7t3v3__inv_2 -pin {Y} -input_transition_rise 0.0000 -input_transition_fall 0.0000 [get_ports {rxd}]
+set_timing_derate -early 0.9500
+set_timing_derate -late 1.0500
 ###############################################################################
 # Design Rules
 ###############################################################################

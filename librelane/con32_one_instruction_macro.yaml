@@ -85,7 +85,7 @@ RUN_POST_GRT_DESIGN_REPAIR: true       # Repara Slew y Max Cap post-GRT
 
 RUN_POST_GRT_RESIZER_TIMING: true      # Optimiza Setup post-GRT (opcional pero útil)
 RUN_POST_GPL_DESIGN_REPAIR: true
-RUN_POST_GRT_RESIZER_TIMING: true
+#RUN_POST_GRT_RESIZER_TIMING: true
 
 GRT_ADJUSTMENT: 0.15                   # Aumenta la capacidad efectiva de las capas de metal
 
@@ -155,7 +155,7 @@ MAX_CAPACITANCE_CONSTRAINT: 0.2
 
 PL_RESIZER_ALLOW_SETUP_VIOS: false
 
-DEDUPLICATE_CORNERS: false
+#DEDUPLICATE_CORNERS: false
 
 
 
