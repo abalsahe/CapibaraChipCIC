@@ -1,6 +1,6 @@
 <testsuites name="results">
   <testsuite name="all" package="all">
-    <property name="random_seed" value="1794109172" />
-    <testcase name="test_uart_convolution" classname="test" file="/home/ral298/CapibaraChipCIC/cocotb/tb_conv32bit/test.py" lineno="107" time="906.5458664894104" sim_time_ns="6304406.664" ratio_time="6954.316264673678" />
+    <property name="random_seed" value="1794198874" />
+    <testcase name="test_uart_convolution_ordenFinal" classname="test" file="/home/ral298/CapibaraChipCIC/cocotb/tb_conv32bit/test.py" lineno="335" time="97.30911159515381" sim_time_ns="48067426.664" ratio_time="493966.34987256274" />
   </testsuite>
 </testsuites>

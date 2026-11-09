@@ -70,12 +70,8 @@ def decimal_a_binario(numero, escale):
 filt = np.array([[[-1,0,1],[-1,0,1],[-1,0,1]],
                  [[2,1,2],[2,1,2],[2,1,2]],
                  [[0,0,0],[0,0,1],[0,0,0]],
-                 [[0,0,0],[0,0,0],[0,0,1]],
-                 [[0,0,1],[0,0,0],[0,0,0]],
-                 [[0,1,0],[0,0,0],[0,0,0]],
-                 [[1,0,0],[0,0,0],[0,0,0]],
-                 [[0,0,0],[0,0,0],[1,0,0]]], dtype=np.int32)
-bias = [0,0,0,0,0,0,0,0,0]
+                 [[-2,-2,-2],[0,0,0],[2,2,2]]], dtype=np.int32)
+bias = [1,-1,10,-8]
 
 # --- Función Auxiliar Corrutina para enviar un Frame UART completo ---
 async def uart_send_instruction(dut, bueno_str):
@@ -102,25 +98,22 @@ async def uart_send_instruction(dut, bueno_str):
             dut.rxd.value = 1
             await Timer(BIT_TIME_NS, units="ns")
 
-
-# --- Test Principal de Cocotb ---
-@cocotb.test()
-async def test_uart_convolution(dut):
+async def testbenh(dut,imagen_name="./prueba.npy",pixe=16,ReseT=True):
     """Testbench para el Chipathon: Configuración e Inferencia de la UART"""
-    
-    # 1. Arrancar el reloj a 50 MHz (Periodo de 20 ns)
-    cocotb.start_soon(Clock(dut.clk_ref, CLK_PERIOD_NS, units="ns").start())
+    if (ReseT):
+        # 1. Arrancar el reloj a 50 MHz (Periodo de 20 ns)
+        cocotb.start_soon(Clock(dut.clk_ref, CLK_PERIOD_NS, units="ns").start())
 
-    # 2. Secuencia de Reset (Basada en tu bloque initial de Verilog)
-    dut.rst.value = 1
-    dut.rxd.value = 1
-    await Timer(11, units="ns")
-    await Timer(1000, units="ns") # Ajustado de ps a ns proporcionalmente
-    dut.rst.value = 0
-    await Timer(1115, units="ns")
-    dut.rst.value = 1
-    await Timer(1115, units="ns")
-    await Timer(1000, units="ns")
+        # 2. Secuencia de Reset (Basada en tu bloque initial de Verilog)
+        dut.rst.value = 1
+        dut.rxd.value = 1
+        await Timer(11, units="ns")
+        await Timer(1000, units="ns") # Ajustado de ps a ns proporcionalmente
+        dut.rst.value = 0
+        await Timer(1115, units="ns")
+        dut.rst.value = 1
+        await Timer(1115, units="ns")
+        await Timer(1000, units="ns")
 
     # 3. Envío de Filtros y Bias
     dut._log.info("Iniciando envío de filtros...")
@@ -154,7 +147,7 @@ async def test_uart_convolution(dut):
     # image_dummy=np.array(resize(image, (16,16))*Escala,dtype=np.uint32)[:,:,0]
     # Generamos una matriz representativa de 16x16
     
-    image_dummy = np.load("./prueba.npy")
+    image_dummy = np.load(imagen_name)
     
     ren = image_dummy.shape[0]
     col = image_dummy.shape[1]
@@ -171,103 +164,233 @@ async def test_uart_convolution(dut):
                 #dut._log.info("HEX:",hexadecimal)
                 await uart_send_instruction(dut, bueno)
 
-    tam_fil=filt.shape[2]
-    con_ima=np.zeros((image_dummy.shape[0]-2,image_dummy.shape[1]-2),dtype=np.float64)
+    tam_fil=filt.shape[0]
+    con_ima=np.zeros((image_dummy.shape[0]-2,image_dummy.shape[1]-2,tam_fil),dtype=np.float64)
     # sub_capas_ima=np.zeros((tam_fil,image.shape[0]-2,image.shape[1]-2),dtype=np.float64)
-    z=0
-    for i in range(image_dummy.shape[0]-2):
-        for j in range(image_dummy.shape[1]-2):
-            for i_con in range(3):
-                for j_con in range(3):
-                    # print(i,j,i_con,j_con)
-                    con_ima[i,j]+=(filt[z,i_con,j_con]*image_dummy[i+i_con,j+j_con])#*(5/255)*(5/255)*(1/10)*(1/2.5)
-                    # sub_capas_ima[z,i,j]+=(filt[z,i_con,j_con]*image[i+i_con,j+j_con,z])#*(5/255)*(5/255)*(1/10)*(1/2.5)
-        # con_ima[i,j,z]+=bias[0]
-            # print(z,i,j,con_ima[z,i,j])
-    con_ima+=bias[z]
+    #z=0
+    for z in range(tam_fil):
+        for i in range(image_dummy.shape[0]-2):
+            for j in range(image_dummy.shape[1]-2):
+                for i_con in range(3):
+                    for j_con in range(3):
+                        # print(i,j,i_con,j_con)
+                        con_ima[i,j,z]+=(filt[z,i_con,j_con]*image_dummy[i+i_con,j+j_con])#*(5/255)*(5/255)*(1/10)*(1/2.5)
+                        # sub_capas_ima[z,i,j]+=(filt[z,i_con,j_con]*image[i+i_con,j+j_con,z])#*(5/255)*(5/255)*(1/10)*(1/2.5)
+            # con_ima[i,j,z]+=bias[0]
+                # print(z,i,j,con_ima[z,i,j])
+        con_ima[:,:,z]+=bias[z]
     con_ima= np.array(con_ima,dtype=np.int16)
-    dut._log.info("Matriz calculada con al convolucion clasica:")
-    dut._log.info(f"\n{con_ima}")
+    dut._log.info(f"Matriz calculada con al convolucion clasica: ")
+    dut._log.info(f"\n{con_ima[:,:,0]}")
+    dut._log.info(f"\n{con_ima[:,:,1]}")
+    dut._log.info(f"\n{con_ima[:,:,2]}")
+    dut._log.info(f"\n{con_ima[:,:,3]}")
 
     # 5. Obtención de datos / Lectura de resultados
     dut._log.info("Solicitando lectura de datos calculados...")
-    image_fpga_ren = 14 # 16 - 2
-    image_fpga_col = 14
+    image_fpga_ren = image_dummy.shape[0]-2 # 16 - 2
+    image_fpga_col = image_dummy.shape[1]-2
     
-    for filtro_index in range(1):
+
+    matriz_salida=np.zeros((image_fpga_ren,image_fpga_col,tam_fil),dtype=np.float64)
+
+    for filtro_index in range(tam_fil):
         dato = decimal_a_binario(filtro_index, 3) + decimal_a_binario(image_fpga_col - 1, 5) + decimal_a_binario(image_fpga_ren - 1, 5) + '0' + '1'
         bueno = decimal_a_binario(0, 16) + dato.zfill(16)
         
         await uart_send_instruction(dut, bueno)
         
-    # Esperar el tiempo final de procesamiento equivalente a tus #6500000000;
-    dut._log.info("Esperando procesamiento final...")
-    #await Timer(6500000, units="ns")
-    dut._log.info("Solicitando y leyendo datos calculados de la salida TXD...")
-    
-    # Si sabes cuántos bytes esperas recibir (por ejemplo, 14x14 pixeles resultantes)
-    bytes_salida = []
-    
-    # Supongamos que tu módulo responde transmitiendo bytes tras procesar:
-    for n in range(image_fpga_ren * image_fpga_col):
-        # Llama a la corrutina y se congela hasta que la UART mande el byte completo
-        dato_8bits = await uart_receive_byte(dut)
-        dato_8bits = dato_8bits | ((await uart_receive_byte(dut))<<8)
-        bytes_salida.append(dato_8bits)
+
+
+        # Esperar el tiempo final de procesamiento equivalente a tus #6500000000;
+        dut._log.info("Esperando procesamiento final...")
+        #await Timer(6500000, units="ns")
+        dut._log.info("Solicitando y leyendo datos calculados de la salida TXD...")
         
-        # Imprime en la consola de cocotb en tiempo real
-        dut._log.info(f"Byte [{n}] recibido de TXD: Hex=0x{dato_8bits:02X}, Dec={dato_8bits}")
+        # Si sabes cuántos bytes esperas recibir (por ejemplo, 14x14 pixeles resultantes)
+        bytes_salida = []
+        
+        # Supongamos que tu módulo responde transmitiendo bytes tras procesar:
+        for n in range(image_fpga_ren * image_fpga_col):
+            # Llama a la corrutina y se congela hasta que la UART mande el byte completo
+            dato_8bits = await uart_receive_byte(dut)
+            dato_8bits = dato_8bits | ((await uart_receive_byte(dut))<<8)
+            bytes_salida.append(dato_8bits)
+            
+            # Imprime en la consola de cocotb en tiempo real
+            dut._log.info(f"IMAGEN {filtro_index+1}/{tam_fil}, Byte [{n}] recibido de TXD: Hex=0x{dato_8bits:02X}, Dec={dato_8bits}")
 
-    # Si quieres reconstruir tu matriz resultante de la convolución:
-    matriz_salida = np.array(bytes_salida, dtype=np.uint16).view(np.int16).reshape((image_fpga_ren, image_fpga_col))
-    
-    # dut._log.info(f"\n{bytes_salida}, len: {len(bytes_salida)}")
-    dut._log.info("Matriz recibida desde el chip:")
-    dut._log.info(f"\n{matriz_salida}")
-    await Timer(100000, units="ns")
+        # Si quieres reconstruir tu matriz resultante de la convolución:
+        #matriz_salida_aux = np.array(bytes_salida, dtype=np.uint16).view(np.int16).reshape((image_fpga_ren, image_fpga_col,1))
+        matriz_salida_aux = (np.array(bytes_salida, dtype=np.uint16).view(np.int16)).reshape(image_fpga_ren, image_fpga_col)
+        
+        matriz_salida[:,:,filtro_index]=matriz_salida_aux
+        
+        # dut._log.info(f"\n{bytes_salida}, len: {len(bytes_salida)}")
+        dut._log.info("Matriz recibida desde el chip:")
+        dut._log.info(f"\n{matriz_salida[:,:,filtro_index]}")
+        await Timer(100000, units="ns")
 
-
+    matriz_salida=np.array(matriz_salida,dtype=np.int16)
     imagen_comparativa = (con_ima == matriz_salida)
     dut._log.info("Matriz de comparacion de los valores numericos:")
-    dut._log.info(f"\n{imagen_comparativa}")
-
-    # 1. Generar la gráfica comparativa y guardarla
+    dut._log.info(f"\n{imagen_comparativa[:,:,0]}")
+    dut._log.info(f"\n{imagen_comparativa[:,:,1]}")
+    dut._log.info(f"\n{imagen_comparativa[:,:,2]}")
+    dut._log.info(f"\n{imagen_comparativa[:,:,3]}")
     import matplotlib.pyplot as plt
-    fig, axs = plt.subplots(1, 3, figsize=(12, 4))
-    axs[0].imshow(image_dummy, cmap='gray')
-    axs[0].set_title('Imagen Original')
     
-    axs[1].imshow(matriz_salida, cmap='gray')
-    axs[1].set_title('Imagen calculada con CHIP')
-    ren_pc, col_pc = matriz_salida.shape
-    for i in range(ren_pc):
-        for j in range(col_pc):
-            val = matriz_salida[i, j]
-            color_texto = "white" if val < (matriz_salida.max() + matriz_salida.min()) / 2 else "black"
-            axs[1].text(j, i, str(val), ha='center', va='center', 
-                        color=color_texto, fontsize=6)
-            
-    axs[2].imshow(con_ima, cmap='gray')
-    axs[2].set_title('Imagen calculada con PC')
-    ren_chip, col_chip = con_ima.shape
-    for i in range(ren_chip):
-        for j in range(col_chip):
-            val = con_ima[i, j]
-            color_texto = "white" if val < (con_ima.max() + con_ima.min()) / 2 else "black"
-            axs[2].text(j, i, str(val), ha='center', va='center', 
-                        color=color_texto, fontsize=6)
-                        
-    plt.savefig('Completa.png')
-    dut._log.info(f"\nSe creo la imagen resultante: Completa.png")
+    for filtro_index in range(tam_fil):
+
+        # 1. Generar la gráfica comparativa y guardarla
+        fig, axs = plt.subplots(1, 3, figsize=(12, 4))
+        axs[0].imshow(image_dummy, cmap='gray')
+        axs[0].set_title('Imagen Original')
+        
+        axs[1].imshow(matriz_salida[:,:,filtro_index], cmap='gray')
+        axs[1].set_title('Imagen calculada con CHIP')
+        ren_pc, col_pc,_ = matriz_salida.shape
+        for i in range(ren_pc):
+            for j in range(col_pc):
+                val = matriz_salida[i, j,filtro_index]
+                color_texto = "white" if val < (matriz_salida[:,:,filtro_index].max() + matriz_salida[:,:,filtro_index].min()) / 2 else "black"
+                axs[1].text(j, i, str(val), ha='center', va='center', 
+                            color=color_texto, fontsize=6)
+                
+        axs[2].imshow(con_ima[:,:,filtro_index], cmap='gray')
+        axs[2].set_title('Imagen calculada con PC')
+        ren_chip, col_chip,_ = con_ima.shape
+        for i in range(ren_chip):
+            for j in range(col_chip):
+                val = con_ima[i, j,filtro_index]
+                color_texto = "white" if val < (con_ima[:,:,filtro_index].max() + con_ima[:,:,filtro_index].min()) / 2 else "black"
+                axs[2].text(j, i, str(val), ha='center', va='center', 
+                            color=color_texto, fontsize=6)
+                            
+        plt.savefig('./images_completas/'+str(pixe)+'Completa'+str(filtro_index)+'.png')
+        dut._log.info(f"\nSe creo la imagen resultante: {pixe}Completa{filtro_index}.png de {tam_fil}")
 
     # 2. Asertos de verificación solicitados por los revisores
     coincidencias = np.sum(imagen_comparativa * 1)
-    total_esperado = image_fpga_ren * image_fpga_col
+    total_esperado = image_fpga_ren * image_fpga_col * tam_fil
+    dut._log.info(f"\nCoincide {coincidencias}/{total_esperado}")
+
+    # Condición explícita para forzar el NO PASS
+    if not np.array_equal(matriz_salida, con_ima):
+        # Opcional: Imprime en rojo en la consola antes de matar el test
+        dut._log.error(f"❌ NO PASS: Fallo en la comparativa de matrices.")
+        
+        # Detiene el test inmediatamente
+        raise AssertionError(
+            f"TEST FAILED: Solo coincidieron {coincidencias}/{total_esperado} valores. "
+            f"Matriz HW diferente a Golden Model."
+        )
     
-    # Assert explícito con mensaje descriptivo
-    assert np.array_equal(matriz_salida, con_ima), (
-        f"TEST FAILED: Solo coincidieron {coincidencias}/{total_esperado} valores. "
-        f"Matriz HW diferente a Golden Model."
-    )
-    
+    # Si el código no entra al if (es decir, sí son iguales), continúa hasta aquí
     dut._log.info("✅ TEST PASSED: La matriz calculada por el HW coincide exactamente con el Golden Model.")
+
+
+# --- Test Principal de Cocotb ---
+
+#@cocotb.test()
+#async def test_uart_convolution_orden(dut):
+#    await testbenh(dut,imagen_name="./imagen_5x5.npy",pixe=5)
+#    await testbenh(dut,imagen_name="./imagen_10x10.npy",pixe=10,ReseT=False)
+#    await testbenh(dut,ReseT=False)
+#
+#@cocotb.test()
+#async def test_uart_convolution_orden1(dut):
+#    await testbenh(dut,imagen_name="./imagen_5x5.npy",pixe=5)
+#    await testbenh(dut,imagen_name="./imagen_7x7.npy",pixe=7,ReseT=False)
+#    await testbenh(dut,imagen_name="./imagen_10x10.npy",pixe=10,ReseT=False)
+#    await testbenh(dut,imagen_name="./imagen_14x14.npy",pixe=14,ReseT=False)
+#    await testbenh(dut,ReseT=False)
+#
+#
+#@cocotb.test()
+#async def test_uart_convolution_orden2(dut):
+#    await testbenh(dut)
+#    await testbenh(dut,imagen_name="./imagen_10x10.npy",pixe=10,ReseT=False)
+#    await testbenh(dut,imagen_name="./imagen_5x5.npy",pixe=5,ReseT=False)
+#
+#
+#@cocotb.test()
+#async def test_uart_convolution_orden3(dut):
+#    await testbenh(dut)
+#    await testbenh(dut,imagen_name="./imagen_13x13.npy",pixe=13,ReseT=False)
+#    await testbenh(dut,imagen_name="./imagen_10x10.npy",pixe=10,ReseT=False)
+#    await testbenh(dut,imagen_name="./imagen_8x8.npy",pixe=8,ReseT=False)
+#    await testbenh(dut,imagen_name="./imagen_5x5.npy",pixe=5,ReseT=False)
+#
+#
+#
+#@cocotb.test()
+#async def test_uart_convolution_orden4(dut):
+#    await testbenh(dut,imagen_name="./imagen_15x15.npy",pixe=15)
+#    await testbenh(dut,imagen_name="./imagen_6x6.npy",pixe=6,ReseT=False)
+#    await testbenh(dut,imagen_name="./imagen_11x11.npy",pixe=11,ReseT=False)
+#    await testbenh(dut,imagen_name="./imagen_12x12.npy",pixe=12,ReseT=False)
+#    await testbenh(dut,imagen_name="./imagen_9x9.npy",pixe=9,ReseT=False)
+
+@cocotb.test()
+async def test_uart_convolution_ordenFinal(dut):
+    await testbenh(dut,imagen_name="./imagen_14x14.npy",pixe=14)
+    await testbenh(dut,imagen_name="./imagen_6x6.npy",pixe=6,ReseT=False)
+    await testbenh(dut,imagen_name="./imagen_13x13.npy",pixe=13,ReseT=False)
+    await testbenh(dut,imagen_name="./imagen_5x5.npy",pixe=5,ReseT=False)
+    await testbenh(dut,ReseT=False)
+    await testbenh(dut,imagen_name="./imagen_9x9.npy",pixe=9,ReseT=False)
+    await testbenh(dut,imagen_name="./imagen_12x12.npy",pixe=12,ReseT=False)
+    await testbenh(dut,imagen_name="./imagen_7x7.npy",pixe=7,ReseT=False)
+    await testbenh(dut,imagen_name="./imagen_15x15.npy",pixe=15,ReseT=False)
+
+
+
+#@cocotb.test()
+#async def test_uart_convolution(dut):
+#    await testbenh(dut)
+#
+#@cocotb.test()
+#async def test_uart_convolution1(dut):
+#    await testbenh(dut,imagen_name="./imagen_5x5.npy",pixe=5)
+#
+#@cocotb.test()
+#async def test_uart_convolution2(dut):
+#    await testbenh(dut,imagen_name="./imagen_6x6.npy",pixe=6)
+#
+#@cocotb.test()
+#async def test_uart_convolution3(dut):
+#    await testbenh(dut,imagen_name="./imagen_7x7.npy",pixe=7)
+#
+#@cocotb.test()
+#async def test_uart_convolution4(dut):
+#    await testbenh(dut,imagen_name="./imagen_8x8.npy",pixe=8)
+#
+#@cocotb.test()
+#async def test_uart_convolution5(dut):
+#    await testbenh(dut,imagen_name="./imagen_9x9.npy",pixe=9)
+#
+#@cocotb.test()
+#async def test_uart_convolution6(dut):
+#    await testbenh(dut,imagen_name="./imagen_10x10.npy",pixe=10)
+#
+#@cocotb.test()
+#async def test_uart_convolution7(dut):
+#    await testbenh(dut,imagen_name="./imagen_11x11.npy",pixe=11)
+#
+#@cocotb.test()
+#async def test_uart_convolution8(dut):
+#    await testbenh(dut,imagen_name="./imagen_12x12.npy",pixe=12)
+#
+#@cocotb.test()
+#async def test_uart_convolution9(dut):
+#    await testbenh(dut,imagen_name="./imagen_13x13.npy",pixe=13)
+#
+#@cocotb.test()
+#async def test_uart_convolution10(dut):
+#    await testbenh(dut,imagen_name="./imagen_14x14.npy",pixe=14)
+#
+#@cocotb.test()
+#async def test_uart_convolution11(dut):
+#    await testbenh(dut,imagen_name="./imagen_15x15.npy",pixe=15)
+#
