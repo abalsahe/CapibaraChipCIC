@@ -20,8 +20,6 @@ module D14_topcell (Vin,
  output vpre1;
  output vpre2;
 
-
-
 /*
  wire A_wire;
  wire B_wire;
@@ -104,7 +102,5 @@ module D14_topcell (Vin,
     .vpre4(vpre4_int),
     .vw11(vw11_net),
     .vw42(vw42_net));
-    
 */
-
 endmodule

@@ -15,9 +15,6 @@ module D14_topcell (Vin,
  output vpost2;
  output vpre1;
  output vpre2;
-
-
-
 /*
  wire A_wire;
  wire B_wire;
